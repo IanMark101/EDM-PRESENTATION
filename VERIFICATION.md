@@ -26,3 +26,9 @@ Deploy this project folder, not the clinic frontend/backend folders. Select the 
 - Environment variables: none
 
 The included `vercel.json` supplies these settings. The project is configured for Vercel but has not been deployed to the user's Vercel account. Local command success does not verify account-specific deployment settings.
+
+## Fullscreen update
+
+Fullscreen now requests the current slide element instead of the entire document. The toolbar, navigation footer and presentation panels remain outside that fullscreen surface. Entering fullscreen closes notes/dialogs and focuses the slide; leaving restores focus to the fullscreen control. Notes, slide-index and help shortcuts cannot open panels while fullscreen is active. Slide-navigation keys and the F toggle remain available, and Esc uses the browser's native fullscreen exit.
+
+`npm run lint` and `npm run build` passed after this change. Native browser fullscreen could not be tested live because local browser use is disabled in Work settings. No Git commit, push or deployment was performed for this update.

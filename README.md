@@ -31,6 +31,8 @@ Use the arrows, Space, Page Up/Down, or previous/next buttons. Home and End jump
 
 The identity, laboratory and ETL interactions are educational simulations. They do not call the clinic API or change clinic records.
 
+Fullscreen presents only the current slide, with no toolbar, footer, notes, index or printer controls. Use the arrow keys, Space or Page Up/Down to navigate. Press Esc or F to leave fullscreen; the normal controls return. Notes and index shortcuts are disabled while presenting in fullscreen.
+
 ## Checks
 
 `npm run lint` runs the Node syntax checker on every shipped JavaScript file, validates JSON configuration and checks source text hygiene. `npm run build` performs those checks plus slide integrity, required topics, references, static assets and Vercel configuration checks. Neither command installs packages or uses clinic credentials.

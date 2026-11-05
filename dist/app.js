@@ -68,12 +68,14 @@
     $('index-empty').hidden = count !== 0;
   }
   function openIndex() {
+    if (document.fullscreenElement) return;
     $('slide-search').value = '';
     renderIndex();
     if (!$('slide-index').open) $('slide-index').showModal();
     $('slide-search').focus();
   }
   function showNotes(value = !notesVisible) {
+    if (value && document.fullscreenElement) return;
     notesVisible = value;
     $('speaker-notes').hidden = !value;
     $('notes-toggle').setAttribute('aria-pressed', String(value));
@@ -82,7 +84,7 @@
   async function fullScreen() {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();
-      else if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
+      else if (stage.requestFullscreen) await stage.requestFullscreen();
       else $('announcement').textContent = 'Full screen is not supported by this browser. Use your browser presentation or full-screen command.';
     } catch { $('announcement').textContent = 'Full screen was not available. You can still navigate the presentation normally.'; }
   }
@@ -146,10 +148,19 @@
     else if (key === 'o') { event.preventDefault(); openIndex(); }
     else if (key === 'f') { event.preventDefault(); void fullScreen(); }
     else if (key === 'escape') showNotes(false);
-    else if (key === '?') $('shortcut-dialog').showModal();
+    else if (key === '?' && !document.fullscreenElement) $('shortcut-dialog').showModal();
   });
   document.addEventListener('fullscreenchange', () => {
     const active = !!document.fullscreenElement;
+    document.querySelector('.toolbar').inert = active;
+    document.querySelector('.navigation').inert = active;
+    if (active) {
+      showNotes(false);
+      document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
+      stage.focus({ preventScroll: true });
+    } else {
+      $('fullscreen-toggle').focus({ preventScroll: true });
+    }
     $('fullscreen-toggle').innerHTML = window.CARE_ICONS[active ? 'Minimize' : 'Maximize'];
     $('fullscreen-toggle').setAttribute('aria-label', active ? 'Exit full screen' : 'Enter full screen');
   });

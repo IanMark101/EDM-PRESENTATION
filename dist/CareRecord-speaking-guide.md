@@ -202,7 +202,7 @@ For example, an incomplete lab report cannot be approved, an uncertain import is
 
 Evidence: Actual workflow services and frontend role workspaces; demonstration checklist derived from the implemented system.
 
-## 26. Connected records. Clear responsibilities.
+## 26. Connected care. Trusted data.
 
 If asked what we are making, say: CareRecord is a clinic data-management system that connects patient registration, consultations, laboratory records and billing. It uses role-based access, validation, approvals and audit history to keep information trustworthy, then prepares checked data for reporting.
 

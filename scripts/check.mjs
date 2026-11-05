@@ -35,10 +35,11 @@ const html = await readFile(join(output, 'index.html'), 'utf8');
 assert.ok(/<html lang="en">/.test(html), 'Document language is required.');
 assert.ok(!/\son[a-z]+\s*=/i.test(html), 'Use registered handlers instead of inline event handlers.');
 assert.ok(/name="viewport"/.test(html), 'Responsive viewport is required.');
-const css = await readFile(join(output, 'styles.css'), 'utf8');
+const css = (await Promise.all(['styles.css', 'visuals.css'].map(name => readFile(join(output, name), 'utf8')))).join('\n');
 const strippedCSS = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(['"])(?:\\.|(?!\1)[^\\])*?\1/g, '');
 assert.equal((strippedCSS.match(/{/g) || []).length, (strippedCSS.match(/}/g) || []).length, 'CSS braces must balance.');
 assert.ok(css.includes('prefers-reduced-motion') && css.includes('@media print'), 'Reduced-motion and print rules are required.');
+assert.ok(css.includes('.slide-composition') && css.includes('justify-content:safe center'), 'Normal and fullscreen slides need a centered content composition.');
 console.log(`Lint passed: ${scripts} JavaScript files, JSON configuration, HTML and CSS checks.`);
 if (mode === 'lint') process.exit(0);
 
@@ -60,6 +61,8 @@ for (const slide of deck) {
     renderedSlides.push(rendered);
     assert.ok(typeof rendered === 'string' && rendered.length > 200, `Empty slide: ${slide.id}`);
     assert.ok(!/undefined|\[object Object\]|\u2014|\u2013/.test(rendered), `Unexpected content: ${slide.id}`);
+    const headings = (rendered.match(/\bid="slide-title"/g) || []).length;
+    assert.equal(headings, slide.cover || slide.customHeading ? 1 : 0, `Custom title must replace, not duplicate, the shared title: ${slide.id}`);
   }
 }
 const laboratory = deck.find(slide => slide.id === 'laboratory');
@@ -71,6 +74,13 @@ assert.ok(quality.render({ match: 'safe' }).includes('Link as a laboratory draft
 const reporting = deck.find(slide => slide.id === 'etl-example').render({ loaded: true });
 assert.equal((reporting.match(/class="source-row included"/g) || []).length, 4, 'ETL example must include four checked facts.');
 assert.equal((reporting.match(/class="source-row excluded"/g) || []).length, 2, 'ETL example must exclude two drafts.');
+const roles = deck.find(slide => slide.id === 'the-roles').render({});
+assert.equal((roles.match(/class="role-row"/g) || []).length, 6, 'All six staff responsibilities must remain visible.');
+const permissions = deck.find(slide => slide.id === 'governance').render({});
+assert.equal((permissions.match(/class="permission-card"/g) || []).length, 6, 'All six permission boundaries must remain visible.');
+const closing = deck.find(slide => slide.id === 'closing');
+assert.equal(closing.customHeading, true, 'Closing slide needs one custom heading without a duplicate title.');
+assert.equal((closing.render({}).match(/class="visual-icon"/g) || []).length, 4, 'Closing recap must retain all four EDM concepts.');
 const app = await readFile(join(output, 'app.js'), 'utf8');
 for (const id of ['notes-toggle', 'index-toggle', 'print-button', 'speaker-notes', 'slide-index']) {
   assert.ok(!html.includes(`id="${id}"`) && !app.includes(`$('${id}')`), `Removed presentation control must stay removed: ${id}`);

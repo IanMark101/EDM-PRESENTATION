@@ -10,7 +10,7 @@
     root.querySelectorAll('[data-icon]').forEach(element => { element.innerHTML = window.CARE_ICONS[element.dataset.icon] || ''; });
   }
   function markup(slide, state = stateFor(slide)) {
-    return `${slide.cover ? '' : `<h2 class="slide-heading" id="slide-title">${slide.title}</h2>`}<div class="slide-content">${slide.render(state)}</div>`;
+    return `<div class="slide-composition">${slide.cover || slide.customHeading ? '' : `<h2 class="slide-heading" id="slide-title">${slide.title}</h2>`}<div class="slide-content">${slide.render(state)}</div></div>`;
   }
   function render(animate = false) {
     const slide = deck[current];

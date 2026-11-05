@@ -6,6 +6,8 @@ Audience: a student presenter and a classroom/project-review audience. Use plain
 
 Design: preserve CareRecord's forest (#2c3b31), sage (#4a7053), light neutral surfaces, Inter body type, Playfair Display headlines, restrained 8px corners and soft focus states. DESIGN_VARIANCE 4, MOTION_INTENSITY 3, VISUAL_DENSITY 4. Native CSS and JavaScript, no external runtime dependencies. Use a real, non-sensitive sign-in screenshot and semantic diagrams; avoid decorative stock imagery or simulated product screenshots. Light theme matches the existing application and a projected slide deck.
 
+Visual revision: preserve the brand with DESIGN_VARIANCE 5, MOTION_INTENSITY 3 and VISUAL_DENSITY 4. Use one consistent semantic palette across the deck: identity blue, clinical green, laboratory teal, billing amber, review/reporting plum and governance slate. Color communicates role or state and always accompanies text/icons. Redesign permissions, source connections, reporting and lesson alignment as visual explanations. The closing slide has one custom headline plus a four-concept recap. A shared content composition centers normal and fullscreen layouts; long content remains accessible by scrolling.
+
 ## Storyboard
 
 | Slide | Topic | What the audience should understand |

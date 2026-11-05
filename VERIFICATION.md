@@ -42,3 +42,13 @@ The build checks that removed controls are absent and that handlers reference ex
 ## Fullscreen content alignment
 
 Fullscreen now vertically centers each slide's complete composition. Footnotes follow the content with a fixed gap instead of consuming the remaining height and pinning themselves to the bottom. Cover and closing layouts no longer expand to absorb that space. Safe centering and non-shrinking content preserve access to the beginning of slides whose content is taller than the viewport, with vertical scrolling available. These rules apply only in fullscreen; normal-view layout is unchanged. Live fullscreen visual verification remains unavailable with browser access disabled.
+
+## Visual redesign and normal-view alignment
+
+The current version groups each slide heading, body and footnote inside a shared composition that centers in both normal and fullscreen views. This supersedes the earlier fullscreen-only alignment note. Long compositions remain non-shrinking and scroll from the first line.
+
+The closing slide now opts out of the generic heading and supplies one custom heading, eliminating the duplicated titles. The deck adds consistent labeled colors for all six responsibilities, connected-record diagrams, permission cards, source-flow diagrams, ETL stage colors, a payment chart of the existing fictional amounts and a visual reference-slide alignment ledger. Notes, Slides and Printer controls remain removed.
+
+Build assertions check one heading per slide, all six roles and permission boundaries, all four closing concepts, the preserved ETL example outcomes and all static assets. Local browser discovery still reports browser use disabled, so the redesigned layouts have not been visually verified in a live browser. The original browser checks above apply to the earlier design.
+
+The visual revision passes `npm run lint` and `npm run build`. A separate CSS parser check accepted both stylesheets, and all 26 rendered slide fragments have balanced HTML structure. Department text/tint contrast ratios range from 5.20:1 to 5.93:1. These source checks do not substitute for live layout or fullscreen verification.

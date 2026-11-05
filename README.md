@@ -1,6 +1,6 @@
 # CareRecord presentation
 
-A standalone static frontend with 26 slides about the clinic problem, complete patient workflow, governance, integration, data quality and ETL. It uses the existing CareRecord theme and a real sign-in screenshot. All patient examples and prices are fictional.
+A standalone static frontend with 9 slides about the clinic problem, complete patient workflow, governance, integration, data quality and ETL. It uses the existing CareRecord theme and a real sign-in screenshot. All patient examples and prices are fictional.
 
 No clinic backend, database, environment variables or secret credentials are needed. Assets and fonts are local, and there are no runtime package dependencies.
 
@@ -29,11 +29,11 @@ Upload or push **this folder** as its own project. If it is inside a larger repo
 
 Use the arrows, Space, Page Up/Down, or previous/next buttons. Home and End jump to the first and last slide. F toggles fullscreen, and ? shows shortcuts. The slide counter is informational. Notes, slide-index and printer controls have been removed from the presentation. A separate speaking guide remains available as `dist/CareRecord-speaking-guide.md`.
 
-The identity, laboratory and ETL interactions are educational simulations. They do not call the clinic API or change clinic records.
+The laboratory and ETL interactions are educational simulations. They do not call the clinic API or change clinic records. The separate speaking guide retains the detailed explanations from the original 26-slide version, grouped under the nine current slides.
 
 Fullscreen presents only the current slide, with no toolbar or footer. Use the arrow keys, Space or Page Up/Down to navigate. Press Esc or F to leave fullscreen; the normal navigation and fullscreen controls return.
 
-Normal and fullscreen views center the heading, visual content and footnote together. Department colors stay consistent throughout: identity blue, clinical green, laboratory teal, billing amber, review/reporting plum and account governance slate. The permissions, integration and ETL diagrams and the fictional payment chart explain the data relationships without connecting to the clinic system.
+Normal and fullscreen views center the heading, visual content and footnote together. Department colors stay consistent throughout: identity blue, clinical green, laboratory teal, billing amber, review/reporting plum and account governance slate. The complete workflow, permission cards, quality gates, ETL example and fictional payment summary explain the data relationships without connecting to the clinic system.
 
 ## Checks
 

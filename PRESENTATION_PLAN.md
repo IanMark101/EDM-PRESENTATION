@@ -13,41 +13,26 @@ Visual revision: preserve the brand with DESIGN_VARIANCE 5, MOTION_INTENSITY 3 a
 | Slide | Topic | What the audience should understand |
 |---|---|---|
 | 1 | Connected care, trusted data | The project's identity and central purpose |
-| 2 | The problem: fragmented records | Separate records lead to uncertain identity and slow handoffs |
-| 3 | Why develop CareRecord? | Shared identity, clear ownership, checked data and reporting |
-| 4 | One system, connected departments | The application contains EMR-like, LIS-like and billing workflows |
-| 5 | The three EDM pillars | Integration connects; governance controls; quality checks |
-| 6 | Six roles, clear responsibilities | Each role has a distinct job and access scope |
-| 7 | Meet the example patient | A fictional patient/visit will anchor the explanation |
-| 8 | Registration | Verify identity, check duplicates, assign a doctor |
-| 9 | Check-in | A waiting visit and doctor handoff are created |
-| 10 | Consultation | The doctor records care and can request a test during the visit |
-| 11 | Laboratory | Drafts are completed, checked and approved before result release |
-| 12 | Doctor follow-up | Approved report versions require explicit doctor review |
-| 13 | Billing and payment | Signed consultation, itemized bill, payment and receipt |
-| 14 | Complete workflow | Clinical and financial branches share patient/visit identity |
-| 15 | Governance in practice | Access scope is enforced by the backend |
-| 16 | Accountability and correction | Versions, evidence and audit history preserve responsibility |
-| 17 | Data quality | Uncertain matches are held; incomplete reports cannot be approved |
-| 18 | Integration in practice | Internal APIs and controlled JSON imports connect information |
-| 19 | Extract, transform, load | The implemented reporting refresh is application-level batch ETL |
-| 20 | Worked ETL example | Six example source records yield four selected reporting facts |
-| 21 | Reporting | Counts and balances reflect selected checked copies, not live totals |
-| 22 | Architecture | Browser, Next.js, Express, Prisma and PostgreSQL responsibilities |
-| 23 | PowerPoint alignment | Map actual features to reference slides 3-7, 11, 13, 15 and 18 |
-| 24 | Implemented and future scope | External EMR/LIS/insurance and formal compliance are not claimed |
-| 25 | Demonstration guide | Present a convincing end-to-end scenario with quality gates |
-| 26 | Project explanation and closing | A concise, accurate explanation the presenter can use |
+| 2 | Why develop CareRecord? | Fragmented records create identity questions and slow handoffs; shared identity connects the work |
+| 3 | Connect, govern, check | Integration, governance and quality work together through internal APIs, source imports and linked records |
+| 4 | Complete patient workflow | Registration, check-in and consultation lead to laboratory approval/doctor review and invoice/payment/receipt branches |
+| 5 | Six roles and accountability | All six responsibilities, access boundaries, correction history, audit entries and version checks |
+| 6 | Data quality gates | Hold uncertain identities; save incomplete results as drafts; release only checked reports |
+| 7 | ETL and reporting example | Extract, transform and load; six sources become four checked facts, with two drafts excluded and financial totals explained |
+| 8 | PowerPoint alignment and scope | Reference concepts mapped to implemented features, architecture, future work and a demonstration outline |
+| 9 | Connected care, trusted data | One closing headline and a visual recap of integration, governance, quality and ETL |
+
+The deck is condensed from 26 slides to nine. Related topics share visual diagrams instead of repeating explanatory paragraphs. Every original speaking-note paragraph and source reference is retained in the separate speaking guide under its corresponding new slide. This keeps the complete explanation available without adding on-screen slides.
 
 ## Presentation behavior
 
 - Previous/next controls, keyboard arrows, Space, Page Up/Down, Home/End and stable slide URLs.
-- Slide index with chapters and search. Native dialog focus management.
-- Speaker-note panel per slide, downloadable speaking guide, fullscreen and print-all-slides.
-- Educational interactions cover the three EDM concepts, laboratory completeness, identity-match outcomes, ETL phases and a reporting refresh example. All use fictional examples and never call the clinic API.
+- Fullscreen shows only the slide. Normal view retains the brand, fullscreen control, navigation and keyboard help.
+- Notes, slide-index and printer controls remain removed. Detailed speaking prompts are in a separate Markdown guide.
+- Educational interactions demonstrate laboratory completeness and a reporting refresh. Identity matching is explained visually. All examples are fictional and never call the clinic API.
 - Responsive layouts: readable stacked content on phones; spacious slide canvas for projection.
 - Accessible button labels, retained focus visibility, reduced-motion handling and print styles.
 
 ## Verification
 
-Check source syntax, slide uniqueness/counts, required topics, source references, assets and interactions. Inspect representative layouts and all slide overflow in the browser. Test next/previous, index search/navigation, notes, educational interactions, URL restoration and mobile layout. Deliver a standalone frontend configured for the user's own Vercel deployment. The user selected Vercel after initial private draft registration; no Sites source upload or publication is needed. Keep all clinic credentials and operational data out of this project.
+Check source syntax, nine-slide integrity, the full patient handoffs, six roles, quality/ETL outcomes, source references and assets. Verify retained speaking-note coverage and parse the stylesheets/rendered fragments. Live browser checks cover navigation, educational interactions, URL restoration, normal/fullscreen centering and mobile overflow when browser access is available; report that limitation when it is disabled. Deliver a standalone frontend configured for the user's own Vercel deployment. The user selected Vercel after initial private draft registration; no Sites source upload or publication is needed. Keep all clinic credentials and operational data out of this project.

@@ -47,10 +47,10 @@ const context = vm.createContext({ window: {} });
 vm.runInContext(await readFile(join(output, 'icons.js'), 'utf8'), context, { timeout: 3000 });
 vm.runInContext(await readFile(join(output, 'slides.js'), 'utf8'), context, { timeout: 3000 });
 const deck = context.window.CARE_DECK;
-assert.equal(deck.length, 26, 'The agreed storyboard has 26 slides.');
+assert.equal(deck.length, 9, 'The condensed presentation has nine slides.');
 assert.equal(new Set(deck.map(slide => slide.id)).size, deck.length, 'Slide IDs must be unique.');
 assert.equal(new Set(deck.map(slide => slide.chapter)).size, 4, 'Expected four narrative chapters.');
-const required = ['the-problem', 'registration', 'check-in', 'consultation', 'laboratory', 'doctor-follow-up', 'billing', 'complete-workflow', 'governance', 'data-quality', 'integration', 'etl', 'etl-example', 'alignment', 'scope'];
+const required = ['welcome', 'the-problem', 'three-pillars', 'complete-workflow', 'governance', 'data-quality', 'etl', 'alignment', 'closing'];
 for (const id of required) assert.ok(deck.some(slide => slide.id === id), `Missing topic: ${id}`);
 const renderedSlides = [];
 for (const slide of deck) {
@@ -65,19 +65,17 @@ for (const slide of deck) {
     assert.equal(headings, slide.cover || slide.customHeading ? 1 : 0, `Custom title must replace, not duplicate, the shared title: ${slide.id}`);
   }
 }
-const laboratory = deck.find(slide => slide.id === 'laboratory');
-assert.ok(laboratory.render({}).includes('Approval stays blocked'), 'Incomplete laboratory example must retain the approval gate.');
-assert.ok(laboratory.render({ lab: 'complete' }).includes('Ready for approval'), 'Completed laboratory example must explain approval eligibility.');
 const quality = deck.find(slide => slide.id === 'data-quality');
 assert.ok(quality.render({}).includes('Hold for identity review.'), 'Uncertain identities must be held.');
-assert.ok(quality.render({ match: 'safe' }).includes('Link as a laboratory draft.'), 'Matched imports must still require laboratory approval.');
-const reporting = deck.find(slide => slide.id === 'etl-example').render({ loaded: true });
-assert.equal((reporting.match(/class="source-row included"/g) || []).length, 4, 'ETL example must include four checked facts.');
-assert.equal((reporting.match(/class="source-row excluded"/g) || []).length, 2, 'ETL example must exclude two drafts.');
-const roles = deck.find(slide => slide.id === 'the-roles').render({});
-assert.equal((roles.match(/class="role-row"/g) || []).length, 6, 'All six staff responsibilities must remain visible.');
+assert.ok(quality.render({}).includes('Approval stays blocked'), 'Incomplete laboratory example must retain the approval gate.');
+assert.ok(quality.render({ lab: 'complete' }).includes('Ready for approval'), 'Completed laboratory example must explain approval eligibility.');
+const reporting = deck.find(slide => slide.id === 'etl').render({ loaded: true });
+assert.equal((reporting.match(/class="included"/g) || []).length, 4, 'ETL example must include four checked facts.');
+assert.ok(reporting.includes('2 drafts excluded: consultation + laboratory'), 'ETL example must exclude both draft types.');
 const permissions = deck.find(slide => slide.id === 'governance').render({});
-assert.equal((permissions.match(/class="permission-card"/g) || []).length, 6, 'All six permission boundaries must remain visible.');
+assert.equal((permissions.match(/class="permission-card"/g) || []).length, 6, 'All six responsibilities and permission boundaries must remain visible.');
+const workflow = deck.find(slide => slide.id === 'complete-workflow').render({});
+for (const concept of ['Register', 'Check in', 'Consult', 'Test request', 'Check and approve', 'Review and plan', 'Prepare invoice', 'Record payment', 'Print receipt']) assert.ok(workflow.includes(concept), `Missing workflow handoff: ${concept}`);
 const closing = deck.find(slide => slide.id === 'closing');
 assert.equal(closing.customHeading, true, 'Closing slide needs one custom heading without a duplicate title.');
 assert.equal((closing.render({}).match(/class="visual-icon"/g) || []).length, 4, 'Closing recap must retain all four EDM concepts.');

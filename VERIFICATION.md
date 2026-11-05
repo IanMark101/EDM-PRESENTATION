@@ -2,6 +2,18 @@
 
 Completed November 6, 2026 (Asia/Taipei).
 
+## Current nine-slide edition
+
+The presentation now has nine slides, condensed from 26. The complete workflow, all six roles, integration, governance, data-quality gates, ETL, reporting, architecture, PowerPoint alignment and implementation limits remain covered. All 52 original speaking-note paragraphs are retained in the separate guide, grouped under the nine new slides.
+
+- `npm run lint` and `npm run build` pass. The build checks nine slides, the complete workflow handoffs, six role cards, blocked/eligible lab approval states, four included ETL facts and two excluded drafts, headings, assets and Vercel settings.
+- Both stylesheets parse successfully. Rendered slide fragments have balanced HTML structure.
+- The current body content ranges from 35 to 128 words per slide; explanatory detail remains in the speaking guide.
+- Shared composition centering, semantic role colors and fullscreen behavior are retained. Notes, Slides and Printer controls remain removed.
+- Live layout, navigation and fullscreen checks for this edition remain unverified because local browser use is disabled in Work settings. The older browser checks below apply only to the original edition.
+
+The following sections record earlier revisions and their verification history; their 26-slide counts and removed controls do not describe the current edition.
+
 ## Commands
 
 - `npm run lint`: passed JavaScript syntax, JSON configuration, HTML/CSS hygiene and reduced-motion/print rule checks. This is a project-specific validator using Node, not ESLint.

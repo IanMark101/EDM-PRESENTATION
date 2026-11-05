@@ -1,0 +1,12 @@
+{
+  "name": "carerecord-presentation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A standalone frontend presentation explaining CareRecord and EDM concepts.",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/check.mjs build",
+    "lint": "node scripts/check.mjs lint"
+  },
+  "engines": { "node": ">=22" }
+}

@@ -38,3 +38,7 @@ Fullscreen now requests the current slide element instead of the entire document
 Removed Notes, Slides (the slide index) and Printer from the normal presentation interface as well as fullscreen. Their panels, click handlers and keyboard shortcuts were removed. The slide counter is now plain text; the closing slide restarts the presentation instead of opening the removed index. Previous/next, keyboard navigation, fullscreen, the shortcut help and all 26 content slides remain. The separate speaking-guide file is retained outside the UI. Earlier index/notes/print verification describes the original version, not the current controls.
 
 The build checks that removed controls are absent and that handlers reference existing elements. Browser verification remains unavailable while local browser access is disabled.
+
+## Fullscreen content alignment
+
+Fullscreen now vertically centers each slide's complete composition. Footnotes follow the content with a fixed gap instead of consuming the remaining height and pinning themselves to the bottom. Cover and closing layouts no longer expand to absorb that space. Safe centering and non-shrinking content preserve access to the beginning of slides whose content is taller than the viewport, with vertical scrolling available. These rules apply only in fullscreen; normal-view layout is unchanged. Live fullscreen visual verification remains unavailable with browser access disabled.

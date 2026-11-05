@@ -27,11 +27,11 @@ Upload or push **this folder** as its own project. If it is inside a larger repo
 
 ## Presenting
 
-Use the arrows, Space, Page Up/Down, or previous/next buttons. Home and End jump to the first and last slide. N opens speaker notes, O opens the searchable slide index, F toggles fullscreen, and ? shows shortcuts. Notes can be downloaded as a speaking guide. The print button prints all slides and can save a PDF through the browser.
+Use the arrows, Space, Page Up/Down, or previous/next buttons. Home and End jump to the first and last slide. F toggles fullscreen, and ? shows shortcuts. The slide counter is informational. Notes, slide-index and printer controls have been removed from the presentation. A separate speaking guide remains available as `dist/CareRecord-speaking-guide.md`.
 
 The identity, laboratory and ETL interactions are educational simulations. They do not call the clinic API or change clinic records.
 
-Fullscreen presents only the current slide, with no toolbar, footer, notes, index or printer controls. Use the arrow keys, Space or Page Up/Down to navigate. Press Esc or F to leave fullscreen; the normal controls return. Notes and index shortcuts are disabled while presenting in fullscreen.
+Fullscreen presents only the current slide, with no toolbar or footer. Use the arrow keys, Space or Page Up/Down to navigate. Press Esc or F to leave fullscreen; the normal navigation and fullscreen controls return.
 
 ## Checks
 

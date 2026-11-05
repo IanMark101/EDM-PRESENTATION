@@ -5,20 +5,12 @@
   const stage = $('slide');
   const states = new Map();
   let current = 0;
-  let notesVisible = false;
-  const escapeHTML = value => String(value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
   const stateFor = slide => states.get(slide.id) || {};
   function hydrateIcons(root = document) {
     root.querySelectorAll('[data-icon]').forEach(element => { element.innerHTML = window.CARE_ICONS[element.dataset.icon] || ''; });
   }
   function markup(slide, state = stateFor(slide)) {
     return `${slide.cover ? '' : `<h2 class="slide-heading" id="slide-title">${slide.title}</h2>`}<div class="slide-content">${slide.render(state)}</div>`;
-  }
-  function updateNotes() {
-    const slide = deck[current];
-    $('notes-slide-title').textContent = `${String(current + 1).padStart(2, '0')} · ${slide.title}`;
-    $('notes-content').innerHTML = slide.notes.map(text => `<p>${escapeHTML(text)}</p>`).join('');
-    $('notes-evidence').textContent = slide.evidence;
   }
   function render(animate = false) {
     const slide = deck[current];
@@ -36,7 +28,6 @@
     $('next').disabled = current === deck.length - 1;
     document.title = `${slide.title} | CareRecord presentation`;
     $('announcement').textContent = `Slide ${current + 1} of ${deck.length}. ${slide.title}`;
-    updateNotes();
   }
   function go(index, focus = false) {
     const next = Math.min(deck.length - 1, Math.max(0, index));
@@ -55,32 +46,6 @@
     if (found < 0) history.replaceState(null, '', `#/${deck[0].id}`);
     render();
   }
-  function renderIndex() {
-    const query = $('slide-search').value.trim().toLowerCase();
-    const chapters = [...new Set(deck.map(slide => slide.chapter))];
-    let count = 0;
-    $('slide-list').innerHTML = chapters.map(chapter => {
-      const found = deck.map((slide, index) => ({ slide, index })).filter(({ slide }) => slide.chapter === chapter && `${slide.title} ${slide.id} ${slide.chapter} ${slide.notes.join(' ')}`.toLowerCase().includes(query));
-      count += found.length;
-      if (!found.length) return '';
-      return `<section class="index-chapter"><h3>${chapter}</h3>${found.map(({ slide, index }) => `<button type="button" class="index-slide" data-slide="${index}" ${current === index ? 'aria-current="true"' : ''}><span>${String(index + 1).padStart(2, '0')}</span>${slide.title}</button>`).join('')}</section>`;
-    }).join('');
-    $('index-empty').hidden = count !== 0;
-  }
-  function openIndex() {
-    if (document.fullscreenElement) return;
-    $('slide-search').value = '';
-    renderIndex();
-    if (!$('slide-index').open) $('slide-index').showModal();
-    $('slide-search').focus();
-  }
-  function showNotes(value = !notesVisible) {
-    if (value && document.fullscreenElement) return;
-    notesVisible = value;
-    $('speaker-notes').hidden = !value;
-    $('notes-toggle').setAttribute('aria-pressed', String(value));
-    if (!value && $('speaker-notes').contains(document.activeElement)) $('notes-toggle').focus();
-  }
   async function fullScreen() {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();
@@ -94,21 +59,8 @@
     stage.focus({ preventScroll: true });
   });
   $('next').addEventListener('click', () => go(current + 1));
-  $('slide-counter').addEventListener('click', openIndex);
-  $('index-toggle').addEventListener('click', openIndex);
-  $('notes-toggle').addEventListener('click', () => showNotes());
-  $('notes-close').addEventListener('click', () => showNotes(false));
   $('fullscreen-toggle').addEventListener('click', fullScreen);
   $('keyboard-help').addEventListener('click', () => $('shortcut-dialog').showModal());
-  $('slide-search').addEventListener('input', renderIndex);
-  $('slide-list').addEventListener('click', event => {
-    const button = event.target.closest('[data-slide]');
-    if (!button) return;
-    $('slide-index').close();
-    const index = Number(button.dataset.slide);
-    if (index === current) stage.focus({ preventScroll: true });
-    else go(index, true);
-  });
   document.querySelectorAll('[data-close]').forEach(button => button.addEventListener('click', () => $(button.dataset.close).close()));
   document.querySelectorAll('dialog').forEach(dialog => dialog.addEventListener('click', event => {
     if (event.target !== dialog) return;
@@ -120,7 +72,7 @@
     if (!button) return;
     const action = button.dataset.action;
     if (action === 'next') { go(current + 1, true); return; }
-    if (action === 'open-index') { openIndex(); return; }
+    if (action === 'restart') { go(0, true); return; }
     const state = { ...stateFor(deck[current]) };
     const changes = { pillar: 'pillar', lab: 'lab', match: 'match', etl: 'etl' };
     if (changes[action]) state[changes[action]] = button.dataset.value;
@@ -144,10 +96,7 @@
     else if (['arrowleft', 'pageup'].includes(key)) { event.preventDefault(); go(current - 1, true); }
     else if (key === 'home') { event.preventDefault(); go(0, true); }
     else if (key === 'end') { event.preventDefault(); go(deck.length - 1, true); }
-    else if (key === 'n') { event.preventDefault(); showNotes(); }
-    else if (key === 'o') { event.preventDefault(); openIndex(); }
     else if (key === 'f') { event.preventDefault(); void fullScreen(); }
-    else if (key === 'escape') showNotes(false);
     else if (key === '?' && !document.fullscreenElement) $('shortcut-dialog').showModal();
   });
   document.addEventListener('fullscreenchange', () => {
@@ -155,7 +104,6 @@
     document.querySelector('.toolbar').inert = active;
     document.querySelector('.navigation').inert = active;
     if (active) {
-      showNotes(false);
       document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close());
       stage.focus({ preventScroll: true });
     } else {
@@ -166,19 +114,6 @@
   });
   window.addEventListener('hashchange', restoreFromURL);
   window.addEventListener('popstate', restoreFromURL);
-  function preparePrint() {
-    const print = $('print-deck');
-    print.innerHTML = deck.map((slide, index) => `<section class="print-slide">${markup(slide, { loaded: true, lab: 'complete', match: 'uncertain' }).replace(/id="[^"]+"/g, '')}<span class="print-page-number">CareRecord · ${String(index + 1).padStart(2, '0')} / ${deck.length}</span></section>`).join('');
-  }
-  $('print-button').addEventListener('click', () => { preparePrint(); window.print(); });
-  window.addEventListener('beforeprint', preparePrint);
-  window.addEventListener('afterprint', () => { $('print-deck').innerHTML = ''; });
-  $('download-notes').addEventListener('click', () => {
-    const text = '# CareRecord speaking guide\n\nPatient details and prices are fictional examples.\n\n' + deck.map((slide, index) => `## ${index + 1}. ${slide.title}\n\n${slide.notes.join('\n\n')}\n\nImplementation evidence: ${slide.evidence}\n`).join('\n');
-    const url = URL.createObjectURL(new Blob([text], { type: 'text/markdown;charset=utf-8' }));
-    const link = document.createElement('a'); link.href = url; link.download = 'CareRecord-speaking-guide.md'; link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  });
   hydrateIcons();
   restoreFromURL();
 })();

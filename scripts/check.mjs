@@ -72,6 +72,11 @@ const reporting = deck.find(slide => slide.id === 'etl-example').render({ loaded
 assert.equal((reporting.match(/class="source-row included"/g) || []).length, 4, 'ETL example must include four checked facts.');
 assert.equal((reporting.match(/class="source-row excluded"/g) || []).length, 2, 'ETL example must exclude two drafts.');
 const app = await readFile(join(output, 'app.js'), 'utf8');
+for (const id of ['notes-toggle', 'index-toggle', 'print-button', 'speaker-notes', 'slide-index']) {
+  assert.ok(!html.includes(`id="${id}"`) && !app.includes(`$('${id}')`), `Removed presentation control must stay removed: ${id}`);
+}
+const documentIDs = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]));
+for (const [, id] of app.matchAll(/\$\('([^']+)'\)/g)) assert.ok(documentIDs.has(id), `Handler references a missing element: ${id}`);
 assert.ok(!/\bfetch\s*\(|new\s+(?:WebSocket|XMLHttpRequest)\b/.test(app), 'Presentation must remain independent of the clinic API.');
 const assets = [...[html, ...renderedSlides].join('\n').matchAll(/(?:src|href)="\.\/([^"#]+)"/g), ...css.matchAll(/url\('\.\/([^']+)'\)/g)].map(match => match[1]);
 for (const path of new Set(assets)) assert.ok((await stat(join(output, path))).isFile(), `Missing asset: ${path}`);

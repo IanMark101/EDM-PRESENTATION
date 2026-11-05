@@ -32,3 +32,9 @@ The included `vercel.json` supplies these settings. The project is configured fo
 Fullscreen now requests the current slide element instead of the entire document. The toolbar, navigation footer and presentation panels remain outside that fullscreen surface. Entering fullscreen closes notes/dialogs and focuses the slide; leaving restores focus to the fullscreen control. Notes, slide-index and help shortcuts cannot open panels while fullscreen is active. Slide-navigation keys and the F toggle remain available, and Esc uses the browser's native fullscreen exit.
 
 `npm run lint` and `npm run build` passed after this change. Native browser fullscreen could not be tested live because local browser use is disabled in Work settings. No Git commit, push or deployment was performed for this update.
+
+## Toolbar removal correction
+
+Removed Notes, Slides (the slide index) and Printer from the normal presentation interface as well as fullscreen. Their panels, click handlers and keyboard shortcuts were removed. The slide counter is now plain text; the closing slide restarts the presentation instead of opening the removed index. Previous/next, keyboard navigation, fullscreen, the shortcut help and all 26 content slides remain. The separate speaking-guide file is retained outside the UI. Earlier index/notes/print verification describes the original version, not the current controls.
+
+The build checks that removed controls are absent and that handlers reference existing elements. Browser verification remains unavailable while local browser access is disabled.

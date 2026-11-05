@@ -55,7 +55,6 @@ main{display:flex;align-items:center;padding:8px 42px;min-width:0}
 .nav-button svg{width:18px;height:18px}
 .slide-counter{min-width:64px;font-size:12px;font-variant-numeric:tabular-nums;color:var(--muted);padding:8px 5px;border-radius:6px}
 .slide-counter strong{color:var(--forest)}
-.slide-counter:hover{background:var(--sage-soft)}
 progress{position:absolute;bottom:0;left:42px;width:calc(100% - 84px);height:2px;appearance:none;border:0;background:var(--border)}
 progress::-webkit-progress-bar{background:var(--border)}
 progress::-webkit-progress-value{background:var(--sage)}
@@ -337,7 +336,6 @@ dialog::backdrop{background:#23382b77}
 /* Fullscreen presents the slide itself. Sibling toolbars and panels stay outside. */
 .slide:fullscreen{width:100vw;height:100dvh;min-height:0;max-width:none;margin:0;border:0;border-radius:0;box-shadow:none;padding:clamp(28px,5vw,90px);background:var(--paper);overflow:auto}
 .slide:fullscreen::backdrop{background:var(--paper)}
-.slide:fullscreen [data-action="open-index"]{display:none}
 @media(max-width:760px){.slide:fullscreen{padding:24px 22px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 @page{size:landscape;margin:0}

@@ -15,14 +15,16 @@ Visual revision: preserve the brand with DESIGN_VARIANCE 5, MOTION_INTENSITY 3 a
 | 1 | Connected care, trusted data | The project's identity and central purpose |
 | 2 | Why develop CareRecord? | Fragmented records create identity questions and slow handoffs; shared identity connects the work |
 | 3 | Connect, govern, check | Integration, governance and quality work together through internal APIs, source imports and linked records |
-| 4 | Complete patient workflow | Registration, check-in and consultation lead to laboratory approval/doctor review and invoice/payment/receipt branches |
-| 5 | Six roles and accountability | All six responsibilities, access boundaries, correction history, audit entries and version checks |
+| 4 | Complete patient workflow | Patient handoffs, laboratory/financial branches, and account manager → service/price link → billing responsibilities |
+| 5 | Six roles and accountability | All six responsibilities, manager-owned prices, read-only billing prices, correction history and access boundaries |
 | 6 | Data quality gates | Hold uncertain identities; save incomplete results as drafts; release only checked reports |
 | 7 | ETL and reporting example | Extract, transform and load; six sources become four checked facts, with two drafts excluded and financial totals explained |
-| 8 | PowerPoint alignment and scope | Reference concepts mapped to implemented features, architecture, future work and a demonstration outline |
+| 8 | PowerPoint alignment and scope | Reference concepts, implemented pricing, one standard consultation fee/per-test rates, future fee options and architecture |
 | 9 | Connected care, trusted data | One closing headline and a visual recap of integration, governance, quality and ETL |
 
-The deck is condensed from 26 slides to nine. Related topics share visual diagrams instead of repeating explanatory paragraphs. Every original speaking-note paragraph and source reference is retained in the separate speaking guide under its corresponding new slide. This keeps the complete explanation available without adding on-screen slides.
+The deck is condensed from 26 slides to nine. Related topics share visual diagrams instead of repeating explanatory paragraphs. The speaking guide retains the detailed explanations, with billing and role descriptions revised to match the implemented price-list update. This keeps the complete explanation available without adding on-screen slides.
+
+Pricing alignment: the account manager enters clinic-approved prices, the system links completed consultations/approved tests to active prices, and billing reviews the bill and records payments. Missing prices, stale quotes and repeated linked charges are blocked. Saved amounts are retained on existing bills. The current scope is one standard consultation fee plus individual test prices; fees by doctor, specialty or visit type and discount/insurance rules remain future work. The example amounts are fictional and are not installed as clinic prices.
 
 ## Presentation behavior
 

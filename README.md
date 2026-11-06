@@ -2,6 +2,8 @@
 
 A standalone static frontend with 9 slides about the clinic problem, complete patient workflow, governance, integration, data quality and ETL. It uses the existing CareRecord theme and a real sign-in screenshot. All patient examples and prices are fictional.
 
+The deck reflects manager-controlled service prices and charges linked to completed consultations or approved tests. It explains that billing uses approved prices, that saved bills retain their amounts, and that the current clinic scope supports one standard consultation fee plus separate test prices. Different fees by doctor/visit type, discounts and insurance pricing remain future work.
+
 No clinic backend, database, environment variables or secret credentials are needed. Assets and fonts are local, and there are no runtime package dependencies.
 
 ## Local use

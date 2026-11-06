@@ -4,13 +4,21 @@ Completed November 6, 2026 (Asia/Taipei).
 
 ## Current nine-slide edition
 
-The presentation now has nine slides, condensed from 26. The complete workflow, all six roles, integration, governance, data-quality gates, ETL, reporting, architecture, PowerPoint alignment and implementation limits remain covered. All 52 original speaking-note paragraphs are retained in the separate guide, grouped under the nine new slides.
+The presentation has nine slides, condensed from 26. The complete workflow, all six roles, integration, governance, data-quality gates, ETL, reporting, architecture, PowerPoint alignment and implementation limits remain covered. Detailed speaking prompts remain in the separate guide, with pricing and role descriptions revised to match the current implementation.
 
 - `npm run lint` and `npm run build` pass. The build checks nine slides, the complete workflow handoffs, six role cards, blocked/eligible lab approval states, four included ETL facts and two excluded drafts, headings, assets and Vercel settings.
 - Both stylesheets parse successfully. Rendered slide fragments have balanced HTML structure.
-- The current body content ranges from 35 to 128 words per slide; explanatory detail remains in the speaking guide.
+- The current body content ranges from 35 to 140 words per slide; explanatory detail remains in the speaking guide.
 - Shared composition centering, semantic role colors and fullscreen behavior are retained. Notes, Slides and Printer controls remain removed.
-- Live layout, navigation and fullscreen checks for this edition remain unverified because local browser use is disabled in Work settings. The older browser checks below apply only to the original edition.
+- Browser access was available for this pricing revision. All nine slides were navigated at 1440×900 in normal and native fullscreen views: no slide overflow or horizontal overflow was found, and each complete composition's measured vertical-center offset was zero. Fullscreen exposed only the slide. All nine phone layouts were checked at 390×844 without horizontal page overflow. The laboratory completeness toggle and ETL refresh still produce the expected outcomes.
+
+## Pricing alignment revision
+
+The patient workflow includes a visible account manager → system → billing price handoff. The role cards distinguish maintaining approved prices from using read-only prices and receiving payments. The financial example labels its fictional approved consultation/test fees, and the scope slide explicitly limits the implementation to one standard consultation fee plus separate test prices. Fees by doctor or visit type remain future work.
+
+The speaking guide explains first-use price entry, links to completed services, saved charge provenance, retained historical amounts, missing-price/stale-quote/repeat-charge checks, and pricing validation on imports. Build assertions protect these content requirements. No clinic credentials or operational data were added, and the presentation still does not call the clinic API.
+
+`npm run lint` and `npm run build` passed after this revision. Both stylesheets parsed successfully. The verified workflow screenshot is saved outside the published project at `../tmp/audit/presentation-pricing-workflow.jpg`.
 
 The following sections record earlier revisions and their verification history; their 26-slide counts and removed controls do not describe the current edition.
 

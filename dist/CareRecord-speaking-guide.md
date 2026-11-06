@@ -34,7 +34,9 @@ A lab result demonstrates all three at once: it is linked to a patient and visit
 
 Integration occurs internally when staff actions use the application API to update linked records. WebSocket notifications and periodic refreshes help the next department see its work.
 
-The second path is a controlled JSON source import for laboratory or billing records. Imports validate data, retain source references and hold uncertain identities. The whole file commits together, so a rejected row does not leave a partly saved file. These are useful integration methods, but they are not external-system CDC or an insurance connector.
+The second path is a controlled JSON source import for laboratory or billing records. Imports validate data, retain source references and hold uncertain identities. The whole file commits together, so a rejected row does not leave a partly saved file. New billing imports must also match completed services and manager-approved prices. These are useful integration methods, but they are not external-system CDC or an insurance connector.
+
+Pricing shows the three concepts together. The charge links to a completed consultation or approved test, the account manager controls its approved price, and the system checks that a valid price exists and the linked service has not already been charged. Billing reviews the charge and records payment.
 
 Evidence: backend/prisma/schema.prisma: Patient, Visit, LabReport and Invoice; reference slide 11. | Reference slide 3; shared/domain.ts; clinic.service.ts; server.ts visibleData(). | frontend app/lib/backend.ts; clinic.routes.ts; importsService(); realtime/notifications.ts; reference slide 8.
 
@@ -64,21 +66,21 @@ A notification means the result is available. It does not prove that the doctor 
 
 This review is attached to the approved version. If laboratory staff correct and reapprove the report, the previous doctor review does not automatically cover the changed result. The doctor needs to review the new approved version.
 
-Billing owns the financial record. A signed consultation is required before a bill can be prepared, and the database allows one invoice per visit.
+The account manager first enters the clinic-approved consultation fee and laboratory test prices under Service prices. No example prices are installed automatically. Billing owns the invoice and payment record. A completed consultation is required before a bill can be prepared, and the database allows one invoice per visit.
 
-In our example the consultation is 500 pesos and the laboratory service is 250 pesos. Ana pays 500 pesos, leaving 250 pesos due. These are teaching amounts, not actual clinic prices. The system records a payment; it does not itself process a bank or card transaction. Additional services are added to the existing invoice with a reason.
+For this fictional example, the account manager has approved 500 pesos for consultation and 250 pesos for the laboratory test. Billing selects the completed consultation and approved test, and the system fills their prices from that list. Each charge identifies its service record and who set the price. Ana pays 500 pesos, leaving 250 pesos due. These are teaching amounts, not actual clinic prices. The system records a payment; it does not itself process a bank or card transaction.
 
 This is the full workflow. Registration establishes identity and checks the patient in. The doctor starts the visit, documents care, requests tests as needed and signs the consultation.
 
-The laboratory branch ends with an approved report and explicit doctor review. The financial branch can begin once the consultation is signed, with later approved services added to the same bill. Payment and receipt recording complete the financial work. Reviewers handle uncertain identities and reports; account managers support access.
+The laboratory branch ends with an approved report and explicit doctor review. The financial branch can begin once the consultation is signed, with later approved services added to the same bill. Payment and receipt recording complete the financial work. Approved later services are added to the existing bill with a reason, using their active approved prices. Reviewers handle uncertain identities and reports; account managers maintain staff access and the price list.
 
-Evidence: Patient has many visits; LabReport and Invoice each reference a patient and visit in the Prisma schema. | clinic.service.ts patientsService(); shared/domain.ts validatePatient() and identityKey(). | clinic.service.ts checkInsService() and visitsService(); VisitWorkflow.queueKey uniqueness. | clinic.service.ts visitsService() and labsService(); shared/clinical.ts cleanClinical(). | clinic.service.ts labsService(); shared/domain.ts labProblems(); server.ts visibleData(). | operations.service.ts doctorReviewService(); shared/clinical.ts needsDoctorReview(); labsService() corrections. | clinic.service.ts invoicesService(); billing.repository.ts createBillOnce(); Invoice.visitId unique; operations.service.ts printable documents. | checkInsService(), visitsService(), labsService(), doctorReviewService(), invoicesService() and reviewsService().
+Evidence: Patient has many visits; LabReport and Invoice each reference a patient and visit in the Prisma schema. | clinic.service.ts patientsService(); shared/domain.ts validatePatient() and identityKey(). | clinic.service.ts checkInsService() and visitsService(); VisitWorkflow.queueKey uniqueness. | clinic.service.ts visitsService() and labsService(); shared/clinical.ts cleanClinical(). | clinic.service.ts labsService(); shared/domain.ts labProblems(); server.ts visibleData(). | operations.service.ts doctorReviewService(); shared/clinical.ts needsDoctorReview(); labsService() corrections. | billing.service.ts managedInvoicesService(); pricing.service.ts servicePricesService(); shared/billing.ts chargeOffers(); Invoice.visitId unique; operations.service.ts printable documents. | checkInsService(), visitsService(), labsService(), doctorReviewService(), invoicesService() and reviewsService().
 
 ## 5. Six roles. Controlled responsibilities.
 
 There are six staff roles. Registration handles identity and arrival. Doctors handle consultations and clinical decisions. Laboratory staff handle reports. Billing handles invoices and payments.
 
-The reviewer supports identity decisions and reporting. The account manager handles staff access. A patient portal is not part of the current application, so the patient is the subject of the workflow rather than a seventh software role.
+The reviewer supports identity decisions and reporting. The account manager handles staff access and enters the clinic-approved service prices. This is our authorized application role for maintaining the price list; the clinic decides who approves its fees. A patient portal is not part of the current application, so the patient is the subject of the workflow rather than a seventh software role.
 
 Governance is more than hiding a button. The backend restricts the action itself and controls what information is returned to the browser.
 
@@ -88,7 +90,9 @@ Clinical corrections must be accountable. The system retains earlier signed cons
 
 Version checks also protect simultaneous editing. If a staff member saves an outdated version, the system asks them to refresh instead of silently overwriting a newer record. Audit entries support traceability, although the current audit storage is not a formally immutable external archive.
 
-Evidence: shared/domain.ts ROLES, ROLE_NAMES and ROLE_DETAILS; clinic workspace navigation. | shared/domain.ts assertRole(); security.ts roleCanReadPatient(); server.ts visibleData(); clinic.controller.ts. | clinic.service.ts visit/lab correction history; record.repository.ts updateWithHistory(); ActivityHistory model.
+Only the account manager can add, change or disable service prices. Price changes require a reason and an activity entry. Billing receives read-only approved prices and cannot replace them with an arbitrary amount. Each new bill line keeps its service reference, responsible staff member, approved price and who set it. Changing the price list affects future charges; saved charges keep their original amounts.
+
+Evidence: shared/domain.ts ROLES, ROLE_NAMES and ROLE_DETAILS; pricing.service.ts servicePricesService(); billing.service.ts linkedCharge(); clinic workspace navigation. | shared/domain.ts assertRole(); security.ts roleCanReadPatient(); server.ts visibleData(); clinic.controller.ts. | clinic.service.ts visit/lab correction history; record.repository.ts updateWithHistory(); ActivityHistory model.
 
 ## 6. Uncertain data waits. Incomplete results stay drafts.
 
@@ -96,7 +100,9 @@ Quality management is visible in how uncertain information is treated. An import
 
 If those details do not safely match, the source is held and an identity-review task is created. Registration or a reviewer verifies evidence and either links it or keeps it separate. Even a safely matched lab import becomes a draft, so identity matching never replaces laboratory approval.
 
-Evidence: clinic.service.ts importsService(), reviewsService() and materializeImport(); reference slides 6 and 11.
+Billing has checks too: a service needs an active manager-approved price, the selected consultation or report must belong to the correct patient and visit, and a linked service cannot be charged twice. A changed price list makes the user review the latest amounts before saving. Billing imports and identity-linking decisions cannot bypass these checks. Earlier bills remain payable, and older charges without source links are labeled honestly rather than given invented history.
+
+Evidence: clinic.service.ts importsService(), reviewsService() and materializeImport(); billing.service.ts linkedCharge() and pricedImportItems(); reference slides 6 and 11.
 
 ## 7. ETL turns checked records into reports.
 
@@ -108,7 +114,7 @@ Here we have six example source records. There is one signed consultation and on
 
 The reporting refresh selects four facts: the signed visit, approved report, invoice and payment. The two drafts remain operational work and do not count as completed activity. This demonstrates extraction, selection and transformation, and loading into reporting copies. It does not measure a real clinic.
 
-The reviewer can understand completed consultations and approved laboratory activity without receiving the full clinical content. The example bill has 750 pesos charged, 500 pesos paid and 250 pesos remaining.
+The reviewer can understand completed consultations and approved laboratory activity without receiving the full clinical content. In this fictional example the manager-approved consultation and test fees total 750 pesos, with 500 pesos paid and 250 pesos remaining. The price list is setup information; the six example source records and four selected reporting facts stay the same. Reporting uses the saved bill amounts, so a later price-list change does not rewrite this bill or its financial history.
 
 A payment received tomorrow should count as tomorrow’s receipt even if the bill was issued today. The reporting code separates these concepts. Figures reflect the latest refresh, while current identity questions and incomplete-report counts are separate quality measures. Reporting removes direct clinical and contact fields but still retains linkable source keys internally.
 
@@ -124,15 +130,15 @@ The alignment comes from demonstrated behavior. Slide 3 defines the three concep
 
 Slide 11 is our chosen healthcare example. Slide 13 is a broader architecture analogy. Slides 15 and 18 include external systems, insurance and regulatory expectations, so we describe that wider alignment as partial. The other industry situations are alternatives, not additional modules we must implement.
 
-We can confidently present the internal workflow, access controls, data checks, imports and reporting. We should also state the limits clearly.
+We can confidently present the internal workflow, access controls, data checks, manager-controlled prices, charges linked to completed services, imports and reporting. The current price list supports one standard consultation fee across the clinic and separate prices for each laboratory test. Different consultation fees by doctor, specialty or first versus follow-up visit are not implemented. Free or discounted charges and insurance pricing also need separate support.
 
 We have not implemented continuous connections to independent EMR, LIS or insurance systems. Formal compliance and accreditation also need organizational procedures, hosting controls and operational evidence beyond application code. Being precise about scope makes the project explanation stronger.
 
-For the live demonstration, prepare fictional records and individual role accounts in advance. Show the normal journey, then show that controls affect behavior.
+For the live demonstration, prepare fictional records and individual role accounts in advance. Have the account manager enter the approved practice fees first. Then show the normal journey and open a bill to explain where its service records and prices came from. The presentation uses fictional amounts and never accesses clinic accounts.
 
 For example, an incomplete lab report cannot be approved, an uncertain import is held for checking, and billing does not receive clinical notes. Complete the report and show the doctor’s follow-up decision. Finally refresh reporting and explain why drafts are excluded. Keep credentials off the screen and out of the presentation.
 
-Evidence: Frontend and backend package.json files; frontend API adapter; backend index.ts; Prisma schema and repositories. | integration.pptx.pdf, slides 3-7, 11, 13, 15 and 18. Code mapping documented in the source review. | Codebase review and reference slides 8, 12, 15 and 18. No external connector or insurance workflow found. | Actual workflow services and frontend role workspaces; demonstration checklist derived from the implemented system.
+Evidence: Frontend and backend package.json files; frontend API adapter; backend index.ts; Prisma schema and repositories. | integration.pptx.pdf, slides 3-7, 11, 13, 15 and 18. Code mapping documented in the source review. | Codebase review and reference slides 8, 12, 15 and 18. No external connector or insurance workflow found. | pricing.service.ts; billing.service.ts; shared/billing.ts; frontend service-prices.tsx and billing-charges.tsx; actual role workspaces and demonstration checklist.
 
 ## 9. Connected care. Trusted data.
 

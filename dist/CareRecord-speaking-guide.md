@@ -64,7 +64,9 @@ An incomplete draft can be saved. Approval requires required details and an expl
 
 A notification means the result is available. It does not prove that the doctor has reviewed it. The application requires a separate confirmation and a recorded follow-up decision.
 
-This review is attached to the approved version. If laboratory staff correct and reapprove the report, the previous doctor review does not automatically cover the changed result. The doctor needs to review the new approved version.
+The assigned doctor reviews the approved report and chooses when to release it. A correction requires a new review and release before the patient can see the updated result.
+
+Registration verifies Ana’s identity in person and gives her a one-time setup code. Ana opens Patient sign-in, sets her own password and can return to see her completed visits, released laboratory results and bills. Her account can only retrieve records linked to her own patient number.
 
 The account manager first enters the clinic-approved consultation fee and laboratory test prices under Service prices. No example prices are installed automatically. Billing owns the invoice and payment record. A completed consultation is required before a bill can be prepared, and the database allows one invoice per visit.
 
@@ -74,13 +76,15 @@ This is the full workflow. Registration establishes identity and checks the pati
 
 The laboratory branch ends with an approved report and explicit doctor review. The financial branch can begin once the consultation is signed, with later approved services added to the same bill. Payment and receipt recording complete the financial work. Approved later services are added to the existing bill with a reason, using their active approved prices. Reviewers handle uncertain identities and reports; account managers maintain staff access and the price list.
 
-Evidence: Patient has many visits; LabReport and Invoice each reference a patient and visit in the Prisma schema. | clinic.service.ts patientsService(); shared/domain.ts validatePatient() and identityKey(). | clinic.service.ts checkInsService() and visitsService(); VisitWorkflow.queueKey uniqueness. | clinic.service.ts visitsService() and labsService(); shared/clinical.ts cleanClinical(). | clinic.service.ts labsService(); shared/domain.ts labProblems(); server.ts visibleData(). | operations.service.ts doctorReviewService(); shared/clinical.ts needsDoctorReview(); labsService() corrections. | billing.service.ts managedInvoicesService(); pricing.service.ts servicePricesService(); shared/billing.ts chargeOffers(); Invoice.visitId unique; operations.service.ts printable documents. | checkInsService(), visitsService(), labsService(), doctorReviewService(), invoicesService() and reviewsService().
+Evidence: Patient has many visits; LabReport and Invoice each reference a patient and visit in the Prisma schema. | clinic.service.ts patientsService(); shared/domain.ts validatePatient() and identityKey(). | clinic.service.ts checkInsService() and visitsService(); VisitWorkflow.queueKey uniqueness. | clinic.service.ts visitsService() and labsService(); shared/clinical.ts cleanClinical(). | clinic.service.ts labsService(); shared/domain.ts labProblems(); server.ts visibleData(). | operations.service.ts doctorReviewService() and patientResultReleaseService(); patient-portal.service.ts; labsService() corrections. | billing.service.ts managedInvoicesService(); pricing.service.ts servicePricesService(); shared/billing.ts chargeOffers(); Invoice.visitId unique; operations.service.ts printable documents. | checkInsService(), visitsService(), labsService(), doctorReviewService(), invoicesService() and reviewsService().
 
-## 5. Six roles. Controlled responsibilities.
+## 5. Six staff roles. Controlled access.
 
 There are six staff roles. Registration handles identity and arrival. Doctors handle consultations and clinical decisions. Laboratory staff handle reports. Billing handles invoices and payments.
 
-The reviewer supports identity decisions and reporting. The account manager handles staff access and enters the clinic-approved service prices. This is our authorized application role for maintaining the price list; the clinic decides who approves its fees. A patient portal is not part of the current application, so the patient is the subject of the workflow rather than a seventh software role.
+The reviewer handles identity checks and reporting. The account manager handles staff access and enters the clinic-approved service prices. Patients use separate accounts with read-only access to their own records.
+
+Activity history lets authorized staff page through recorded events and filter by role, action or date. Setup and result release leave their own entries.
 
 Governance is more than hiding a button. The backend restricts the action itself and controls what information is returned to the browser.
 
@@ -92,7 +96,7 @@ Version checks also protect simultaneous editing. If a staff member saves an out
 
 Only the account manager can add, change or disable service prices. Price changes require a reason and an activity entry. Billing receives read-only approved prices and cannot replace them with an arbitrary amount. Each new bill line keeps its service reference, responsible staff member, approved price and who set it. Changing the price list affects future charges; saved charges keep their original amounts.
 
-Evidence: shared/domain.ts ROLES, ROLE_NAMES and ROLE_DETAILS; pricing.service.ts servicePricesService(); billing.service.ts linkedCharge(); clinic workspace navigation. | shared/domain.ts assertRole(); security.ts roleCanReadPatient(); server.ts visibleData(); clinic.controller.ts. | clinic.service.ts visit/lab correction history; record.repository.ts updateWithHistory(); ActivityHistory model.
+Evidence: shared/domain.ts ROLES, ROLE_NAMES and ROLE_DETAILS; pricing.service.ts servicePricesService(); billing.service.ts linkedCharge(); clinic workspace navigation. | shared/domain.ts assertRole(); security.ts roleCanReadPatient(); server.ts visibleData(); clinic.controller.ts. | clinic.service.ts visit/lab correction history; record.repository.ts updateWithHistory(); history.service.ts; ActivityHistory model.
 
 ## 6. Uncertain data waits. Incomplete results stay drafts.
 
@@ -136,7 +140,7 @@ We have not implemented continuous connections to independent EMR, LIS or insura
 
 For the live demonstration, prepare fictional records and individual role accounts in advance. Have the account manager enter the approved practice fees first. Then show the normal journey and open a bill to explain where its service records and prices came from. The presentation uses fictional amounts and never accesses clinic accounts.
 
-For example, an incomplete lab report cannot be approved, an uncertain import is held for checking, and billing does not receive clinical notes. Complete the report and show the doctor’s follow-up decision. Finally refresh reporting and explain why drafts are excluded. Keep credentials off the screen and out of the presentation.
+Show how an incomplete report is blocked and how an uncertain import is held. After the doctor reviews and releases the result, show it in the patient portal. Use Activity history to find the release event, then refresh the reporting figures and explain which records count. Keep credentials out of the presentation.
 
 Evidence: Frontend and backend package.json files; frontend API adapter; backend index.ts; Prisma schema and repositories. | integration.pptx.pdf, slides 3-7, 11, 13, 15 and 18. Code mapping documented in the source review. | Codebase review and reference slides 8, 12, 15 and 18. No external connector or insurance workflow found. | pricing.service.ts; billing.service.ts; shared/billing.ts; frontend service-prices.tsx and billing-charges.tsx; actual role workspaces and demonstration checklist.
 
